@@ -40,17 +40,17 @@ end
 -- https://github.com/SkyLothar/lua-resty-jwt#jwt-validators
 local validators = require "resty.jwt-validators"
 local claim_spec = {
-  -- validators.set_system_leeway(15), -- time in seconds
-  -- exp = validators.is_not_expired(),
-  -- iat = validators.is_not_before(),
-  -- iss = validators.opt_matches("^http[s]?://yourdomain.auth0.com/$"),
+  validators.set_system_leeway(15), -- time in seconds
+  exp = validators.is_not_expired(),
+  iat = validators.is_not_before(),
+  -- iss = validators.equals("https://securetoken.google.com/yourappid"),
+  -- aud = validators.equals("youappid"),
   -- sub = validators.opt_matches("^[0-9]+$"),
-  -- name = validators.equals_any_of({ "John Doe", "Mallory", "Alice", "Bob" }),
 }
 
 -- make sure to set and put "env JWT_SECRET;" in nginx.conf
-local kid = jwt_key_dict:get(kid)
-local key = fbkey(kid)
+local raw = jwt:load_jwt(token)
+local key = fbkey(raw.header.kid)
 local jwt_obj = jwt:verify(key, token, claim_spec)
 if not jwt_obj["verified"] then
   ngx.status = ngx.HTTP_UNAUTHORIZED
