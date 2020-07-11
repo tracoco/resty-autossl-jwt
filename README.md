@@ -3,6 +3,8 @@
 Build docker image: 
 ```
 docker build . -t resty-autossl-jwt
+docker tag resty-autossl-jwt localhost:5000/resty-autossl-jwt
+docker push localhost:5000/resty-autossl-jwt
 ```
 
 Create a container from the image using the following command, with some notes:
@@ -16,7 +18,7 @@ docker run --name resty-autossl-jwt \
           --net=host \
            -e JWT_SECRET=testjwt \
            -p 80:80 -p 443:443 -d \
-            resty-autossl-jwt
+            localhost:5000/resty-autossl-jwt
 
 ```
 To verify jwt with default setting, please issue a http request
